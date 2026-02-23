@@ -216,3 +216,35 @@ This project demonstrates real DevOps skills:
 ## License
 
 MIT
+
+---
+
+## Docker
+
+You can run the tool inside a Docker container.
+
+Build the image:
+
+```bash
+docker build -t ec2mgr .
+```
+
+Run help:
+
+```bash
+docker run --rm ec2mgr --help
+```
+
+Run with AWS credentials (Linux/macOS):
+
+```bash
+docker run --rm -v ~/.aws:/root/.aws:ro ec2mgr list
+```
+
+Run with AWS credentials (Windows PowerShell):
+
+```powershell
+docker run --rm -v $env:USERPROFILE\.aws:/root/.aws:ro ec2mgr list
+```
+
+---
