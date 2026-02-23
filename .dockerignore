@@ -1,0 +1,13 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.log
+.env
+.aws
+tests
+.vscode
+.idea
+dist
+build
+*.egg-info
