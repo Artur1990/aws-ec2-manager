@@ -22,7 +22,7 @@ from .logging_conf import setup_logging
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="ec2mgr", description="Manage AWS EC2 instances safely.")
-    p.add_argument("--region", default=None, help="AWS region (overrides config)")
+    p.add_argument("--region", default="us-east-1", help="AWS region (overrides config)")
     p.add_argument("--profile", default=None, help="AWS profile name (optional)")
     p.add_argument("--dry-run", action="store_true", help="Do not execute AWS call (DryRun)")
     p.add_argument("--log-level", default=None, help="Log level: DEBUG/INFO/WARNING/ERROR")
@@ -53,10 +53,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     load_dotenv()
-    args = build_parser().parse_args(argv)
+    raw_argv = argv if argv is not None else sys.argv[1:]
+    args = build_parser().parse_args(raw_argv)
 
     cfg = load_config(args.config)
-    region = args.region or cfg.region
+    region = args.region if "--region" in raw_argv else cfg.region
     profile = args.profile if args.profile is not None else cfg.profile
 
     setup_logging(args.log_level)
