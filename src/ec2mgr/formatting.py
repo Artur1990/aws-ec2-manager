@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
 from .aws import InstanceInfo
 
@@ -12,8 +12,8 @@ def format_instances_table(items: Iterable[InstanceInfo]) -> str:
         [r.instance_id, r.name, r.state, r.instance_type, r.public_ip, r.private_ip] for r in rows
     ]
 
-    # простой табличный вывод без внешних библиотек
-    cols = list(zip(headers, *data)) if data else [(h,) for h in headers]
+    # Simple table output without external dependencies.
+    cols = list(zip(headers, *data, strict=False)) if data else [(h,) for h in headers]
     widths = [max(len(str(x)) for x in col) for col in cols]
 
     def fmt_row(row):

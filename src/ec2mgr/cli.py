@@ -1,13 +1,10 @@
 from __future__ import annotations
-import logging
-from .logging_conf import setup_logging
+
 import argparse
+import logging
 import sys
+
 from dotenv import load_dotenv
-from .config import load_config
-
-
-load_dotenv()
 
 from .aws import (
     get_instance,
@@ -18,7 +15,9 @@ from .aws import (
     start_instance,
     stop_instance,
 )
+from .config import load_config
 from .formatting import format_instances_table
+from .logging_conf import setup_logging
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -28,10 +27,6 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--dry-run", action="store_true", help="Do not execute AWS call (DryRun)")
     p.add_argument("--log-level", default=None, help="Log level: DEBUG/INFO/WARNING/ERROR")
     p.add_argument("--config", default=None, help="Path to config JSON (optional)")
-    
-
-
-
 
     sub = p.add_subparsers(dest="cmd", required=True)
 
@@ -57,21 +52,22 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    load_dotenv()
     args = build_parser().parse_args(argv)
+
     cfg = load_config(args.config)
     region = args.region or cfg.region
     profile = args.profile if args.profile is not None else cfg.profile
-    ec2 = make_ec2_client(region=region, profile=profile)
 
     setup_logging(args.log_level)
     log = logging.getLogger("ec2mgr")
     log.debug("Args: %s", args)
 
-    ec2 = make_ec2_client(region=args.region, profile=args.profile)
+    ec2 = make_ec2_client(region=region, profile=profile)
 
     try:
         if args.cmd == "list":
-            log.info("Listing instances in %s", args.region)
+            log.info("Listing instances in %s", region)
             items = list_instances(ec2)
             print(format_instances_table(items))
             return 0

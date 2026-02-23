@@ -1,16 +1,14 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
-
-import json
 
 
 @dataclass(frozen=True)
 class AppConfig:
     region: str = "us-east-1"
-    profile: Optional[str] = None
+    profile: str | None = None
 
 
 def load_config(path: str | None) -> AppConfig:
